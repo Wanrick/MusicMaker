@@ -1,31 +1,53 @@
 ﻿using System;
-using Melanchall.DryWetMidi.Common;
-using Melanchall.DryWetMidi.Smf;
-using Melanchall.DryWetMidi.Smf.Interaction;
+using HonsMusicMaker.Entities;
+using HonsMusicMaker.GeneticAlgorithm;
+using HonsMusicMaker.Processes;
 
 namespace HonsMusicMaker
 {
     class Program
     {
-        private static readonly SevenBitNumber Instrument = (SevenBitNumber) 1; // Piano
-        private static readonly int BeatsPerMinute = 96;
-        
-        static void Main(string[] args)
+        const int PopulationSize = 1000;
+        private static void Main(string[] args)
         {
-            //Create Instrument Program
-            var programInstrument = new ProgramChangeEvent(Instrument);
+            for (int i = 0; i < 50; i++)
+            {
+                var population = new int[PopulationSize][][][];
+                var maxIter = 500;
+                var maxFitness = 0.0;
+                var myPop = new Population(1000, true);
+                var generationCount = 0;
+                
+                while (myPop.GetFittest().GetFitness() < Fitness.GetMaxFitness() && generationCount <= maxIter) {
+                    generationCount++;
+                    maxFitness = myPop.GetFittest().GetFitness();
+                    Console.WriteLine("Generation: " + generationCount + " Fittest: " + maxFitness);
+                    myPop = Algorithm.EvolvePopulation(myPop);
+                }
+                
+                Console.WriteLine(("Solution found!"));
+                Console.WriteLine(("Generation: " + generationCount));
+                Console.WriteLine(("Genes:"));
+                Console.Write((myPop.GetFittest()));
+                
+                CreateMidi.CreateMidiFromIntBars(myPop.GetFittest().GetChromosome(), "Solution_" + i + "_" + maxFitness);
+            }
             
-            //Create Music chunk for chosen instrument
-            var musicChunk= new TrackChunk(programInstrument);
             
-            //Create Tempo for Chunk
-            var tempoMap = TempoMap.Create(Tempo.FromBeatsPerMinute(BeatsPerMinute));
+
+
+
+
+
+            /*CustomNote.Range = 4;
+            var numBars = 4;
+            var voices = 2;
             
-            GafNoteManager noteManager = new GafNoteManager(musicChunk, tempoMap);
-            noteManager.InitialiseNotes(10, 2, 6);
-            //noteManager.InitialiseChords(10, 2, 6);
-            
-            CreateMidi.CreateMidiFile(tempoMap, musicChunk, "Try01");
+
+            var builder = new MusicBuilder();
+            builder.Create(numBars, voices);
+            var music = builder.GetMusic();
+            CreateMidi.CreateMidiFromResult(music);*/
         }
     }
 }

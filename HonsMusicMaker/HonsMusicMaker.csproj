@@ -2,12 +2,17 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <TargetFramework>net472</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="GAF" Version="2.3.1" />
       <PackageReference Include="Melanchall.DryWetMidi" Version="3.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Pattern01.mid" />
+      <None Remove="Try01.mid" />
     </ItemGroup>
 
 </Project>
